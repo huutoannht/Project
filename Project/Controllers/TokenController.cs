@@ -19,59 +19,38 @@ namespace Project.Controllers
     public class TokenController : Controller
     {
 
-        private IConfiguration _configuration;
-
-        public TokenController(IConfiguration Configuration)
-        {
-            _configuration = Configuration;
-        }
-        [AllowAnonymous]
         [HttpPost]
-        public IActionResult Post()
+        public IActionResult Post(string username, string password)
         {
-            if (ModelState.IsValid)
+            if (IsValidUserAndPasswordCombination(username, password))
             {
-                //This method returns user id from username and password.
-                //var userId = GetUserIdFromCredentials(loginViewModel);
-                var userId = 1;
-                if (userId == -1)
-                {
-                    return Unauthorized();
-                }
-
-                var claims = new[]
-                {
-            new Claim(JwtRegisteredClaimNames.Sub, "Abc"),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-                var token = new JwtSecurityToken
-                (
-                    issuer: _configuration["Issuer"],
-                    audience: _configuration["Audience"],
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddDays(60),
-                    notBefore: DateTime.UtcNow,
-                    //signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SigningKey"])),
-                    //        SecurityAlgorithms.HmacSha256)
-                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("A04T1B2D-0ED6-4F28-B685-57D6101A9911")),
-                            SecurityAlgorithms.HmacSha256)
-                );
-                string tokenNew = "";
-                try
-                {
-                    tokenNew = new JwtSecurityTokenHandler().WriteToken(token);
-                }
-                catch (Exception ex)
-                {
-
-                    throw ex;
-                }
-               
-                return Ok(new { token = tokenNew });
+                return new ObjectResult(GenerateToken(username));
             }
 
             return BadRequest();
+        }
+
+        private bool IsValidUserAndPasswordCombination(string username, string password)
+        {
+            return !string.IsNullOrEmpty(username) && username == password;
+        }
+
+        private string GenerateToken(string username)
+        {
+            var claims = new Claim[]
+            {
+            new Claim(ClaimTypes.Name, username),
+            new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
+            new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddDays(1)).ToUnixTimeSeconds().ToString()),
+            };
+
+            var token = new JwtSecurityToken(
+                new JwtHeader(new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes("H38DLSIEKD8EKDOS")),
+                                             SecurityAlgorithms.HmacSha256)),
+                new JwtPayload(claims));
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

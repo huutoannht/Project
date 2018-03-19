@@ -36,21 +36,25 @@ namespace Project
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(jwtBearerOptions =>
-            {
-                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateActor = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Issuer"],
-                    ValidAudience = Configuration["Audience"],
-                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SigningKey"]))
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("A04T1B2D-0ED6-4F28-B685-57D6101A9911"))
-                };
-            });
+
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = "JwtBearer";
+                options.DefaultChallengeScheme = "JwtBearer";
+            })
+             .AddJwtBearer("JwtBearer", jwtBearerOptions =>
+             {
+                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuerSigningKey = true,
+                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("H38DLSIEKD8EKDOS")),
+                     ValidateIssuer = false,
+                     //ValidIssuer = "The name of the issuer",
+                     ValidateAudience = false,
+                     //ValidAudience = "The name of the audience",
+                     ValidateLifetime = true, //validate the expiration and not before values in the token
+                     ClockSkew = TimeSpan.FromMinutes(5) //5 minute tolerance for the expiration date
+                 };
+             });
 
             services.AddMvc()
                 .AddRazorPagesOptions(options =>

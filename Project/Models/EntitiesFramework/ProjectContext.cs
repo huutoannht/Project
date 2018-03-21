@@ -1,11 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace Project.Models.EntitiesFramework
 {
     public partial class ProjectContext : DbContext
     {
+       
         public virtual DbSet<AspNetRoleClaims> AspNetRoleClaims { get; set; }
         public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
@@ -24,8 +26,7 @@ namespace Project.Models.EntitiesFramework
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer(@"Server=.;Database=test123;uid=sa;pwd=HapHap91;MultipleActiveResultSets=true");
+                optionsBuilder.UseSqlServer(Configuration.GetConnectionString("BloggingDatabase"));
             }
         }
 

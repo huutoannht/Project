@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Project.Controllers
 {
     [Route("api/Values")]
-    [Authorize]
+    //[Authorize]
     public class ValuesController : Controller
     {
         // GET: api/Values

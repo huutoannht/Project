@@ -26,9 +26,11 @@
   <ItemGroup>
     <Folder Include="webapp\" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\index.html" />
-  </ItemGroup>
-
+<ItemGroup>
+   <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
+</ItemGroup>
+<Target Name="Build Angular" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">    
+   <Message Text="* * * * * * Building Angular App * * * * * *" Importance="high" />
+   <Exec Command="ng build -prod -aot" />
+</Target>
 </Project>

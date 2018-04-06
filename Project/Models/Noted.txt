@@ -1,1 +1,0 @@
-﻿Scaffold-DbContext “Server=.;Database=test123;uid=sa;pwd=HapHap91;MultipleActiveResultSets=true” Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models/EntitiesFramework
